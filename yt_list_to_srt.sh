@@ -40,7 +40,7 @@ else
 
   # 如果 -f 249 下载出错，可以改为 -f wa 让yt-dlp自动选择最小体积音频
   # 存在问题： upload_date 不一定准确
-  yt-dlp $command -f 249 -o "audio/%(upload_date>%Y-%m-%d)s.%(ext)s" --cookies yt_cookies.txt
+  yt-dlp $command -f 249 -o "audio/%(upload_date>%Y-%m-%d)s_%(id)s.%(ext)s" --cookies yt_cookies.txt
 
   if [ $? -ne 0 ]; then
 

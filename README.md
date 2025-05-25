@@ -16,11 +16,11 @@
 
 ➡️ 自己服务器的域名 (podcast_url)
 
-➡️ 自己通义账号的 cookie
+➡️ 自己通义账号的 cookie (在通义页面按 F12，request headder 中的 Cookie 值)
 
 ➡️ podcast 服务监听的端口号
 
-⚠️ 在 <code>yt_cookies.txt</code> 中配置自己的 youtube cookie (如果ip没有进黑名单则不需要)
+⚠️ 如果被 youtube 黑名单，则需要新建一个 <code>yt_cookies.txt</code> 并配置自己的 youtube cookie (使用 Get cookies.txt LOCALLY 等插件即可获取)
 
 ## 使用方式
 
