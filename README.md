@@ -1,16 +1,10 @@
 # yt_list_to_srt
 
-<hr>
-
 #### 自动将yt播放列表中的视频转换为音频并上传到通义，生成字幕、总结、脑图，然后自动导出
-
-<hr>
 
 ## 实现原理
 
 通义的 <b>链接速读 -> 播客链接转写</b> 功能支持传入一个播客（podcast）链接地址，因此只需要在本地搭建一个 podcast 服务，即可实现自动提交。再配合导出接口，即可自动导出。
-
-<hr>
 
 ## 使用前的准备
 
@@ -28,11 +22,7 @@
 
 ⚠️ 在 <code>yt_cookies.txt</code> 中配置自己的 youtube cookie (如果ip没有进黑名单则不需要)
 
-<hr>
-
 ## 使用方式
-
-<hr>
 
 1、<code>yt_list_to_srt.sh</code>
 
@@ -54,65 +44,49 @@
 
 <hr>
 
-4、<code>
-yt_list_to_srt.sh https://www.youtube.com/watch?v=c5Nr_iD-s7Y
-</code>
+4、<code>yt_list_to_srt.sh https://www.youtube.com/watch?v=c5Nr_iD-s7Y </code>
 
 下载指定视频的音频，上传至通义，生成并导出字幕、导读、脑图
 
 <hr>
 
-5、<code>
-python podcast_server.py
-</code>
+5、<code>python podcast_server.py</code>
 
 启动本地 podcast 服务，默认将 audio 中的音频文件发布到 podcast
 
 <hr>
 
-6、<code>
-python podcast_upload.py
-</code>
+6、<code>python podcast_upload.py</code>
 
 将本地 podcast 服务中的音频提交到通义，并生成字幕、导读、脑图
 
 <hr>
 
-7、<code>
-python betch_export.py
-</code>
+7、<code>python betch_export.py</code>
 
 获取通义最新的 1 条转写任务并导出字幕、导读、脑图
 
 <hr>
 
-8、<code>
-python betch_export.py 3
-</code>
+8、<code>python betch_export.py 3</code>
 
 获取通义最新的 3 条转写任务并导出字幕、导读、脑图
 
 <hr>
 
-9、<code>
-python betch_export.py get_list_to_file
-</code>
+9、<code>python betch_export.py get_list_to_file</code>
 
 获取通义所有已完成的转写任务并保存到 record_info.txt
 
 <hr>
 
-10、<code>
-python betch_export.py export_from_text
-</code>
+10、<code>python betch_export.py export_from_text</code>
 
 从 record_info.txt 中读取所有的 record_id_list 并导出字幕、导读、脑图
 
 <hr>
 
-11、<code>
-python betch_export.py record_id
-</code>
+11、<code>python betch_export.py record_id</code>
 
 从指定 record_id 导出字幕、导读、脑图
 
