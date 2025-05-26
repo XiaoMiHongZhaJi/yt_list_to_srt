@@ -1,7 +1,10 @@
 #!/bin/bash
 
-mkdir -p audio history
-audio_files=$(find audio -type f | grep -E '.(aac|m4a|wav|mp3|webm|mp4)$')
+HISTORY_DIR="history"      # 历史文件目录
+
+mkdir -p audio $HISTORY_DIR
+
+audio_files=$(find audio -type f \( -iname "*.aac" -o -iname "*.m4a" -o -iname "*.wav" -o -iname "*.mp3" -o -iname "*.webm" -o -iname "*.mp4" \))
 
 if [ "$audio_files" ]; then
 
@@ -14,11 +17,15 @@ else
   playlist='https://www.youtube.com/playlist?list=PLi3zrmUZHiY-eH8eNJiwj-viwP3ngIkcd'
   playlist_index=$1
   if [ -z "$playlist_index" ]; then
+
     echo "未传入 url 或 index，下载播放列表中的最新一个音频"
     command="--playlist-items 1 "$playlist
+
   elif [[ "$playlist_index" =~ ^[0-9]+$ ]]; then
+
     echo "下载播放列表中第 $playlist_index 个音频"
     command="--playlist-items $playlist_index "$playlist
+
   elif [[ "$playlist_index" =~ ^[0-9]+-[0-9]+$ ]]; then
 
     start=$(echo "$playlist_index" | cut -d '-' -f 1)
@@ -29,16 +36,20 @@ else
     else
       count=$((end - start + 1))
     fi
+
     echo "下载播放列表中 $count 个音频"
     command="--playlist-items $playlist_index "$playlist
 
   else
+
     echo "下载 $playlist_index 中的音频"
     command="$playlist_index"
+
   fi
+
   sleep 2
 
-  # 如果 -f 249 下载出错，可以改为 -f wa 让yt-dlp自动选择最小体积音频
+  # 如果 -f 249 下载出错，可以改为 -f wa 让 yt-dlp 自动选择最小体积音频
   # 存在问题： upload_date 不一定准确
   yt-dlp $command -f 249 -o "audio/%(upload_date>%Y-%m-%d)s_%(id)s.%(ext)s" --cookies yt_cookies.txt
 
@@ -50,9 +61,49 @@ else
   fi
 
   echo "$(ls audio) 下载完成"
+  audio_files=$(find audio -type f \( -iname "*.aac" -o -iname "*.m4a" -o -iname "*.wav" -o -iname "*.mp3" -o -iname "*.webm" -o -iname "*.mp4" \))
 
 fi
 
+echo "检测视频时长是否超过6小时"
+
+MAX_DURATION=3600*6-1       # 最大时长（秒） 6小时
+
+# 遍历音频文件
+for file in $audio_files; do
+
+  # 获取文件名（不包含扩展名）
+  filename=$(basename "$file")
+  filename_no_ext="${filename%.*}"
+  extension="${filename##*.}"
+
+  # 获取音频时长 (秒)
+  duration=$(ffmpeg -i "$file" 2>&1 | grep "Duration" | cut -d " " -f 4 | sed s/,//)
+
+  echo " $filename 时长 $duration"
+
+  # 将duration转换为秒
+  duration_seconds=$(echo "$duration" | awk -F ":" '{print ($1 * 3600) + ($2 * 60) + $3}')
+
+  # 检查时长是否超过 6 小时
+  if (( $(echo "$duration_seconds > $MAX_DURATION" | bc -l) )); then
+    echo " $filename 时长超过 6 小时，截取前 6 小时"
+
+    # 截取前 6 小时
+    output_file="$AUDIO_DIR/${filename_no_ext}_6.${extension}"
+    ffmpeg -i "$file" -t "$MAX_DURATION" -c copy "$output_file"
+
+    # 移动原始文件到 history 目录
+    mv "$file" "$HISTORY_DIR/$filename"
+    echo " $filename 已截取并移动原始文件"
+
+  fi
+
+done
+
+echo "检测时长处理完成"
+
+sleep 2
 
 echo "准备启动 podcast_server"
 
@@ -88,8 +139,8 @@ pkill -f "python3 podcast_server.py"
 
 sleep 2
 
-echo "移动 $(ls audio) 到 history/"
-mv audio/* history/
+echo "移动 $(ls audio) 到 $HISTORY_DIR/"
+mv audio/* $HISTORY_DIR/
 
 echo "准备导出"
 
