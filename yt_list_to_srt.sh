@@ -49,9 +49,9 @@ else
 
   sleep 2
 
-  # 如果 -f 249 下载出错，可以改为 -f wa 让 yt-dlp 自动选择最小体积音频
-  # 存在问题： upload_date 不一定准确
-  yt-dlp $command -f 249 -o "audio/%(upload_date>%Y-%m-%d)s_%(id)s.%(ext)s" --cookies yt_cookies.txt
+  # 如果 -f 249/250/251 下载出错，可以改为 -f wa 让 yt-dlp 自动选择最小体积音频（比较慢）
+  # 存在问题： upload_date 为上传日期，不一定为直播日期
+  yt-dlp $command -f 249/250/251 -o "audio/%(upload_date>%Y-%m-%d)s_%(id)s.%(ext)s" --cookies yt_cookies.txt
 
   if [ $? -ne 0 ]; then
 
@@ -67,7 +67,7 @@ fi
 
 echo "检测视频时长是否超过6小时"
 
-MAX_DURATION=3600*6-1       # 最大时长（秒） 6小时
+MAX_DURATION=21599       # 最大时长（秒） 6小时
 
 # 遍历音频文件
 for file in $audio_files; do
@@ -107,7 +107,7 @@ sleep 2
 
 echo "准备启动 podcast_server"
 
-python3 podcast_server.py &
+python3 podcast_server.py > podcast_server.log 2>&1 &
 
 if [ $? -ne 0 ]; then
 
