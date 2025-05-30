@@ -91,7 +91,7 @@ for file in $audio_files; do
 
     # 截取前 6 小时
     output_file="$AUDIO_DIR/${filename_no_ext}_6.${extension}"
-    ffmpeg -i "$file" -t "$MAX_DURATION" -c copy "$output_file"
+    ffmpeg -i "$file" -t "$MAX_DURATION" -c copy "audio/$output_file"
 
     # 移动原始文件到 history 目录
     mv "$file" "$HISTORY_DIR/$filename"

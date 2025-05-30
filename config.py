@@ -4,6 +4,9 @@ import logging
 # 音频文件存放位置
 episodes_dir = 'audio/'
 
+# 导出结果存放位置
+result_dir = 'result/'
+
 # podcast 服务监听端口
 port = 55001
 
