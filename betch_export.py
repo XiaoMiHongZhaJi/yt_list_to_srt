@@ -131,6 +131,32 @@ def get_record_list(page_no=1, page_size=1, show_name=None):
         return None
 
 
+def clean_srt_files(root_path="."):
+    to_replace_1 = '\u200b'
+    to_replace_2 = '\u200c'
+
+    for dirpath, _, filenames in os.walk(root_path):
+        for filename in filenames:
+            if filename.endswith("_原文.srt"):
+                file_path = os.path.join(dirpath, filename)
+                logging.info(f"处理文件: {file_path}")
+
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+
+                count_1 = content.count(to_replace_1)
+                count_2 = content.count(to_replace_2)
+                count = count_1 + count_2
+                if count > 0:
+                    new_content = content.replace(to_replace_1, "")
+                    new_content = new_content.replace(to_replace_2, "")
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        f.write(new_content)
+                    logging.info(f"已替换 {count} 个目标字符。")
+                else:
+                    logging.info("未发现目标字符，无需替换。")
+
+
 def export_from_record_id(record_title, record_id):
     try:
         logging.info(f"开始导出 {record_title} record_id: {record_id}")
@@ -223,6 +249,8 @@ def export_from_record_id(record_title, record_id):
                     logging.error(f"step 3 error: 导出失败 record_id: {record_id} doc_type: {doc_type}")
 
             logging.info(f"step 3 success: {record_title} 导出完成")
+            logging.info(f"step 4 : 清理 srt 文件中的多余字符 {record_title}")
+            clean_srt_files(result_dir + record_title)
         else:
             logging.error("导出失败，record_id: " + record_id)
 
