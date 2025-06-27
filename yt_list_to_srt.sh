@@ -4,11 +4,12 @@ HISTORY_DIR="history"      # 历史文件目录
 
 mkdir -p audio $HISTORY_DIR
 
-audio_files=$(find audio -type f \( -iname "*.aac" -o -iname "*.m4a" -o -iname "*.wav" -o -iname "*.mp3" -o -iname "*.webm" -o -iname "*.mp4" \))
+audio_files=$(find audio/ -type f \( -iname "*.aac" -o -iname "*.m4a" -o -iname "*.wav" -o -iname "*.mp3" -o -iname "*.webm" -o -iname "*.mp4" \))
 
 if [ "$audio_files" ]; then
 
-  echo "audio 中存在音频文件，将直接上传至通义，ctrl + c 可取消: "
+  count=$(echo "$audio_files" | wc -l)
+  echo "audio 中存在 $count 个音频文件，将直接上传至通义，ctrl + c 可取消: "
   echo $audio_files
   sleep 5
 
